@@ -8,9 +8,10 @@
 
 
 //Settings for the circles.
-#define MAX_SIZE 5//Max_Size of circle_array
+#define MAX_SIZE 1500//Max_Size of circle_array
 #define X 200
 #define Y 120
+#define DO_DRAW 1
 #define RADIUS 3
 
 
@@ -142,12 +143,14 @@ void circle_controller_draw(CircleController self) {
 
 	sf2d_start_frame(GFX_TOP, GFX_LEFT); //Left for Standard Vision
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0xFF, 0xFF, 0x89, 0xFF)); //Background
-		circle_controller_draw_all_circles(self);
+		if (DO_DRAW) circle_controller_draw_all_circles(self);
 		
 	sf2d_end_frame();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0xFF, 0xFF, 0x89, 0xFF)); //Background
+		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0xFF, 0xEE, 0x89, 0xFF)); //Background
 		sf2d_draw_fill_circle(self->circle_timer->x, self->circle_timer->y, 4, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
+		float fps_percentage = sf2d_get_fps() / 60;
+		sf2d_draw_rectangle(0, 200, fps_percentage * 320, 10, RGBA8(0x00, 0x00, 0x00, 0xFF));
 
 			
 	sf2d_end_frame();
