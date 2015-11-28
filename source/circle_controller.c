@@ -8,11 +8,10 @@
 
 
 //Settings for the circles.
-#define MAX_SIZE 30//Max_Size of circle_array
+#define MAX_SIZE 5//Max_Size of circle_array
 #define X 200
 #define Y 120
-#define RADIUS 10
-#define VELOCITY 5
+#define RADIUS 3
 
 
 
@@ -20,6 +19,11 @@
 CircleController circle_controller_init() {
 	CircleController self = malloc(sizeof *self);
 	if (self == NULL) return NULL;
+	
+	/* Create reference circle */
+	self->circle_timer = malloc(sizeof *self->circle_timer);
+	self->circle_timer->x = 0; self->circle_timer->y = 120; self->circle_timer->x_velocity = 5; self->circle_timer->y_velocity = 0;
+	
 	
 	
 	srand((int)"to be honest, it doesn't really matter");
@@ -43,10 +47,10 @@ void circle_controller_create_all_circles(CircleController self) {
 	int i;
 	
 	for (i=0; i < MAX_SIZE; i++) {
-		int direction = rand() % 4; //This isn't the real way. But I don't actually need good randomness.
+		int x_velocity = 1 + rand() % 50; //This isn't the real way. But I don't actually need good randomness.
+		int y_velocity = 1 + rand() % 40; //This isn't the real way. But I don't actually need good randomness.
 		Circle circle = malloc(sizeof *circle);
-		circle->x = X; circle->y = Y; circle->radius = RADIUS; circle->direction = direction;
-		circle->velocity = VELOCITY;
+		circle->x = X; circle->y = Y; circle->radius = RADIUS; circle->x_velocity = x_velocity; circle->y_velocity = y_velocity;
 		self->circle_array[i] = circle;
 	}
 }
@@ -62,18 +66,46 @@ void circle_controller_free(CircleController self) {
 
 void circle_controller_update_all_circles(CircleController self) {
 	int i;
+	
+	/* Update the reference cirlce */
+	if (self->circle_timer->x > 320) {
+		self->circle_timer->x = 320;
+		self->circle_timer->x_velocity = -(self->circle_timer->x_velocity);
+	}
+	if (self->circle_timer->x < 0) {
+		self->circle_timer->x = 0;
+		self->circle_timer->x_velocity = -(self->circle_timer->x_velocity);
+	}
+	self->circle_timer->x = self->circle_timer->x + self->circle_timer->x_velocity;
+	
+	
+	/* Update the array of circles */
 	for (i=0; i < MAX_SIZE; i++) {
 		Circle circle = self->circle_array[i];
 		
-		if ( (circle->x > 400) || (circle->x < 0) || circle->y > 240 || circle->y < 0) {
-			circle->direction = circle->direction + .85;
+		if (circle->x > 400) {
+			circle->x = 400;
+			circle->x_velocity = -(circle->x_velocity);
 		}
 		
-		int x_dist = circle->velocity * sin(circle->direction);
-		int y_dist = circle->velocity * cos(circle->direction);
+		if (circle->x < 0) {
+			circle->x = 0;
+			circle->x_velocity = -(circle->x_velocity);
+		}
 		
-		circle->x = circle->x + x_dist;
-		circle->y = circle->y + y_dist;
+		if (circle->y > 240) {
+			circle->y = 240;
+			circle->y_velocity = -(circle->y_velocity);
+		}
+		
+		if (circle->y < 0) {
+			circle->y = 0;
+			circle->y_velocity = -(circle->y_velocity);
+		}
+
+		
+		circle->x = circle->x + circle->x_velocity;
+		circle->y = circle->y + circle->y_velocity;
 		
 		
 	}
@@ -115,6 +147,9 @@ void circle_controller_draw(CircleController self) {
 	sf2d_end_frame();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0xFF, 0xFF, 0x89, 0xFF)); //Background
+		sf2d_draw_fill_circle(self->circle_timer->x, self->circle_timer->y, 4, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
+
+			
 	sf2d_end_frame();
 	
 	sf2d_swapbuffers();

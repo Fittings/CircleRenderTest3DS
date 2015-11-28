@@ -12,8 +12,8 @@
 struct _Circle {
 	float x, y;
 	int radius;
-	float velocity;
-	float direction; //In radians
+	float x_velocity;
+	float y_velocity;
 };
 typedef struct _Circle *Circle;
 
@@ -24,6 +24,7 @@ struct _CircleController {
 	int frame;
 	
 	Circle *circle_array; 
+	Circle circle_timer; //Used for tracking FPS
 	
 
 };
