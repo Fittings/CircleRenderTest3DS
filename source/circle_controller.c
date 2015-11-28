@@ -8,11 +8,16 @@
 
 
 //Settings for the circles.
-#define MAX_SIZE 1500//Max_Size of circle_array
-#define X 0
+#define MAX_SIZE 0 	//Max_Size of circle_array
+
+//Starting point + a random distance
+#define X 0 
 #define Y 0
-#define DO_DRAW 0
-#define RADIUS 3
+#define RADIUS 4
+
+
+#define DO_DRAW 1
+#define DO_SQUARE 1
 
 
 
@@ -135,16 +140,6 @@ void circle_controller_handle_state(CircleController self) {
 	
 }
 
-void circle_controller_draw_all_circles(CircleController self) {
-	int i;
-	for (i=0; i < MAX_SIZE; i++) {
-	Circle circle = self->circle_array[i];
-		//sf2d_draw_fill_circle(circle->x, circle->y, circle->radius, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
-		/* Rendering squares works better in citrulib */
-		sf2d_draw_rectangle(circle->x - RADIUS, circle->y - RADIUS, RADIUS, RADIUS, RGBA8(0xFF, 0xA5, 0xC4, 0xFF)); //Background
-
-	}
-}
 
 //Draw these lovely circles on the screen.
 void circle_controller_draw(CircleController self) {
@@ -155,6 +150,7 @@ void circle_controller_draw(CircleController self) {
 		
 	sf2d_end_frame();
 	sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+		
 		sf2d_draw_rectangle(0, 0, 400, 240, RGBA8(0xFF, 0xEE, 0x89, 0xFF)); //Background
 		sf2d_draw_fill_circle(self->circle_timer->x, self->circle_timer->y, 4, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
 		float fps_percentage = sf2d_get_fps() / 60;
@@ -165,6 +161,23 @@ void circle_controller_draw(CircleController self) {
 	
 	sf2d_swapbuffers();
 }
+
+
+//Goes through and draws all the circles.
+void circle_controller_draw_all_circles(CircleController self) {
+	int i;
+	for (i=0; i < MAX_SIZE; i++) {
+	Circle circle = self->circle_array[i];
+		if (DO_SQUARE) {
+			sf2d_draw_rectangle(circle->x - RADIUS, circle->y - RADIUS, RADIUS, RADIUS, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
+		} else {
+			sf2d_draw_fill_circle(circle->x, circle->y, circle->radius, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
+
+		}
+	}
+}
+
+
 
 
 //Handles input relating to the circle_controller
