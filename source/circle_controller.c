@@ -9,9 +9,9 @@
 
 //Settings for the circles.
 #define MAX_SIZE 1500//Max_Size of circle_array
-#define X 200
-#define Y 120
-#define DO_DRAW 1
+#define X 0
+#define Y 0
+#define DO_DRAW 0
 #define RADIUS 3
 
 
@@ -48,10 +48,15 @@ void circle_controller_create_all_circles(CircleController self) {
 	int i;
 	
 	for (i=0; i < MAX_SIZE; i++) {
-		int x_velocity = 1 + rand() % 50; //This isn't the real way. But I don't actually need good randomness.
-		int y_velocity = 1 + rand() % 40; //This isn't the real way. But I don't actually need good randomness.
+		//This is all sloppy. w.ew.e
+		int x_velocity = 1 + rand() % 5; //This isn't the real way. But I don't actually need good randomness.
+		int y_velocity = 1 + rand() % 6; //This isn't the real way. But I don't actually need good randomness.
+		if (rand() % 2 == 0) x_velocity = -x_velocity;
+		if (rand() % 2 == 0) y_velocity = -y_velocity;
+		
+		
 		Circle circle = malloc(sizeof *circle);
-		circle->x = X; circle->y = Y; circle->radius = RADIUS; circle->x_velocity = x_velocity; circle->y_velocity = y_velocity;
+		circle->x = X+(rand()%400); circle->y = Y+(rand()%320); circle->radius = RADIUS; circle->x_velocity = x_velocity; circle->y_velocity = y_velocity;
 		self->circle_array[i] = circle;
 	}
 }
@@ -134,7 +139,10 @@ void circle_controller_draw_all_circles(CircleController self) {
 	int i;
 	for (i=0; i < MAX_SIZE; i++) {
 	Circle circle = self->circle_array[i];
-		sf2d_draw_fill_circle(circle->x, circle->y, circle->radius, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
+		//sf2d_draw_fill_circle(circle->x, circle->y, circle->radius, RGBA8(0xFF, 0xA5, 0xC4, 0xFF));
+		/* Rendering squares works better in citrulib */
+		sf2d_draw_rectangle(circle->x - RADIUS, circle->y - RADIUS, RADIUS, RADIUS, RGBA8(0xFF, 0xA5, 0xC4, 0xFF)); //Background
+
 	}
 }
 
